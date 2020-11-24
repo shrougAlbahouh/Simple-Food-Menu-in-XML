@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>
+Restaurant
+</title>
+<link href="stylesheet.css" rel="stylesheet" type="text/css"/>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script>
+<script>
+$(document).ready(function(){ //Creating the list
+$.ajax({
+url: "menu.xml",
+success: function(xml){
+
+var i=0;
+$(xml).find("food").each(function(){
+var name= $(this).find("name").text(); 
+$("#selection").append("<option name='selection' value='"+i+"'>"+name+"</option>"); 
+i++; });
+} //End success
+}); //End AJAX
+}); //End ready
+
+
+//name, price, description, calories
+function showDetails() { //Retrieving information
+var id = $("#selection").val();
+$.ajax({
+url: "menu.xml",
+success: function(xml){
+
+var i=0;
+$(xml).find("food").each(function(){
+if(i==id) {
+var price= $(this).find("price").text();
+var description= $(this).find("description").text();
+var calories= $(this).find("calories").text();
+
+$("#result").css("display", "block");
+$("#result").html("<strong>Price: </strong>"+ price+"<br>"
+				+ "<strong>Description: </strong>"+description+"<br>"
+				+ "<strong>Calories: </strong>"+calories);
+
+caloriesNo= Number(calories);
+if(caloriesNo>700) $("#caution").css("display", "block"); //Show
+else $("#caution").css("display", "none"); //Hide
+
+} //End if
+i++; }); //End xml function
+} //End success
+}); //End AJAX
+} //End function
+</script>
+</head>
+
+<body>
+<header>
+<h1>Welcome to Shroug's Restaurant</h1>
+</header>
+
+<section>
+<div id="menu"><select id="selection" onchange='showDetails()' >
+<option>Please make a selection ...</option>
+</select></div>
+
+<div id="result" class='box'></div>
+
+<div id="caution" class="caution"><img src="caution.gif"> Caution! high calories!!</div>
+</section>
+
+</body>
+</html>
